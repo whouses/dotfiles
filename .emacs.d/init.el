@@ -355,7 +355,7 @@
   :defer t
   :config
   (require 'dired-x)
-  (setq dired-listing-switches "-alh"
+  (setq dired-listing-switches "-alh --group-directories-first"
         dired-recursive-copies 'always
         dired-recursive-deletes 'always
         dired-dwim-target t))
@@ -621,16 +621,6 @@
   :ensure t
   :bind ("C-c i y" . browse-kill-ring))
 
-;; Counsel
-(use-package counsel
-  :ensure t
-  :bind (("M-x" . counsel-M-x)
-         ("C-x C-f" . counsel-find-file)
-         ("C-h v" . counsel-describe-variable)
-         ("C-h f" . counsel-describe-function))
-  :config
-  (setq counsel-find-file-at-point t))
-
 ;; Discover My Major
 (use-package discover-my-major
   :ensure t
@@ -647,6 +637,11 @@
   :ensure t
   :bind ("C-c x e" . er/expand-region))
 
+;; Flx
+(use-package flx
+  :ensure t
+  :defer t)
+
 ;; Geiser
 (use-package geiser
   :ensure t
@@ -655,40 +650,6 @@
   (setq geiser-active-implementations '(racket)
         geiser-mode-start-repl-p t
         geiser-repl-history-filename (expand-file-name "geiser-history" drot/cache-directory)))
-
-;; Hydra
-(use-package hydra
-  :ensure t
-  :bind (("C-c w r" . hydra-window-resize/body)
-         ("C-c x o" . hydra-outline/body))
-  :config
-  (defhydra hydra-window-resize (:columns 2)
-    "Resize Windows"
-    ("j" enlarge-window "Enlarge Window")
-    ("k" shrink-window "Shrink Window")
-    ("l" enlarge-window-horizontally "Enlarge Window Horizontally")
-    ("h" shrink-window-horizontally "Shrink Window Horizontally")
-    ("q" nil "Quit"))
-
-  (defhydra hydra-outline (:columns 4)
-    "Outline Mode"
-    ("q" hide-sublevels "Hide Sub-levels")
-    ("t" hide-body "Hide Body")
-    ("o" hide-other "Hide Other")
-    ("c" hide-entry "Hide Entry")
-    ("l" hide-leaves "Hide Leaves")
-    ("d" hide-subtree "Hide Sub-tree")
-    ("a" show-all "Show All")
-    ("e" show-entry "Show Entry")
-    ("i" show-children "Show Children")
-    ("k" show-branches "Show Branches")
-    ("s" show-subtree "Show Sub-tree")
-    ("u" outline-up-heading "Up Heading")
-    ("n" outline-next-visible-heading "Next Visible Heading")
-    ("p" outline-previous-visible-heading "Previous Visible Heading")
-    ("f" outline-forward-same-level "Forward Same Level")
-    ("b" outline-backward-same-level "Backward Same Level")
-    ("z" nil "Quit")))
 
 ;; Magit
 (use-package magit
@@ -834,12 +795,6 @@ This doesn't support the chanserv auth method"
   :config
   (setq smex-save-file (expand-file-name "smex-items" drot/cache-directory)))
 
-;; Swiper
-(use-package swiper
-  :ensure t
-  :bind (("C-c s s" . swiper)
-         ("C-c s i" . swiper-from-isearch)))
-
 ;; Systemd mode
 (use-package systemd
   :ensure t
@@ -920,20 +875,68 @@ This doesn't support the chanserv auth method"
   :init
   (add-hook 'prog-mode-hook #'highlight-numbers-mode))
 
-;; Ivy
-(use-package ivy
+;; Hydra
+(use-package hydra
+  :ensure t
+  :bind (("C-c w r" . hydra-window-resize/body)
+         ("C-c x o" . hydra-outline/body))
+  :config
+  (defhydra hydra-window-resize (:columns 2)
+    "Resize Windows"
+    ("j" enlarge-window "Enlarge Window")
+    ("k" shrink-window "Shrink Window")
+    ("l" enlarge-window-horizontally "Enlarge Window Horizontally")
+    ("h" shrink-window-horizontally "Shrink Window Horizontally")
+    ("q" nil "Quit"))
+
+  (defhydra hydra-outline (:columns 4)
+    "Outline Mode"
+    ("q" hide-sublevels "Hide Sub-levels")
+    ("t" hide-body "Hide Body")
+    ("o" hide-other "Hide Other")
+    ("c" hide-entry "Hide Entry")
+    ("l" hide-leaves "Hide Leaves")
+    ("d" hide-subtree "Hide Sub-tree")
+    ("a" show-all "Show All")
+    ("e" show-entry "Show Entry")
+    ("i" show-children "Show Children")
+    ("k" show-branches "Show Branches")
+    ("s" show-subtree "Show Sub-tree")
+    ("u" outline-up-heading "Up Heading")
+    ("n" outline-next-visible-heading "Next Visible Heading")
+    ("p" outline-previous-visible-heading "Previous Visible Heading")
+    ("f" outline-forward-same-level "Forward Same Level")
+    ("b" outline-backward-same-level "Backward Same Level")
+    ("z" nil "Quit")))
+
+;; Swiper
+(use-package swiper
+  :ensure t
   :diminish (ivy-mode . "IY")
-  :bind (("C-c f r" . ivy-recentf)
+  :bind (("C-c s s" . swiper)
+         ("C-c s i" . swiper-from-isearch)
+         ("C-c f r" . ivy-recentf)
          ("C-c t c" . ivy-resume))
   :commands ivy-mode
   :init
   (ivy-mode)
   :config
-  (setq ivy-use-virtual-buffers t
+  (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+        ivy-use-virtual-buffers t
         ivy-display-style 'fancy
         ivy-count-format "(%d/%d) "
         ivy-format-function #'ivy-format-function-arrow
         ivy-wrap t))
+
+;; Counsel
+(use-package counsel
+  :ensure t
+  :bind (("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+         ("C-h v" . counsel-describe-variable)
+         ("C-h f" . counsel-describe-function))
+  :config
+  (setq counsel-find-file-at-point t))
 
 ;; Lispy
 (use-package lispy
