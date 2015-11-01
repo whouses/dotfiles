@@ -59,12 +59,12 @@ color14 = #93e0e3
 color15 = #ffffff
 
 [hints]
-font = Terminus 10
+font = Terminus Bold 10
 foreground = #f0dfaf
 background = #1e2320
 active_foreground = #1e2320
 active_background = #f0dfaf
 padding = 2
 border = #f0dfaf
-border_width = 1.0
-roundness = 2.0
+border_width = 2.0
+roundness = 0.0
